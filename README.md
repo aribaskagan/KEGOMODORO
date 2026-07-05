@@ -4,6 +4,9 @@ KEGOMODORO is a desktop Pomodoro and Stopwatch app built with Python and Tkinter
 
 The active application source lives in [`KEGOMODORO/main.py`](KEGOMODORO/main.py). This repository root contains project docs; the runnable app and packaged builds are inside the [`KEGOMODORO/`](KEGOMODORO) folder.
 
+## Tomato and Berserk Theme
+<img width="1054" height="845" alt="image" src="https://github.com/user-attachments/assets/d5cf77ef-9922-46b3-abce-520b97e4ad30" />
+
 ## Current Features
 
 - Pomodoro mode and Stopwatch mode in one desktop app.
