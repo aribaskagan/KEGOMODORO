@@ -33,7 +33,7 @@ kegomodoro/
 1. Clone the repository and open a terminal in the repo root:
 
 ```bash
-git clone git@github.com:Kagankakao/KEGOMODORO.git
+git clone git@github.com:aribaskagan/KEGOMODORO.git
 cd KEGOMODORO/KEGOMODORO
 ```
 
