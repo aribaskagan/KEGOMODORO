@@ -13,9 +13,9 @@ from kegomodoro.timer import TimerMode, TimerStatus
 from kegomodoro.ui import DraggableWindow
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def tk_root():
-    """Create a hidden Tk root for GUI smoke testing."""
+    """Reuse one hidden Tk root to avoid repeated interpreter startup on Windows."""
     root = tk.Tk()
     root.withdraw()
     yield root
@@ -64,9 +64,16 @@ def test_floating_window_drag_keeps_mouse_capture():
         def __init__(self):
             self.start_x = 0
             self.start_y = 0
+            self.window_start_x = 0
+            self.window_start_y = 0
             self.dragging = False
             self.position = (1150, 440)
             self.captured = False
+            self.used_global_grab = False
+
+        def grab_set_global(self):
+            self.used_global_grab = True
+            self.captured = True
 
         def grab_set(self):
             self.captured = True
@@ -93,10 +100,14 @@ def test_floating_window_drag_keeps_mouse_capture():
 
     DraggableWindow.on_press(window, press_event)
     assert window.dragging is True
+    assert window.used_global_grab is True
     assert window.grab_current() == window
 
     DraggableWindow.on_drag(window, drag_event)
     assert window.position == (1170, 465)
+
+    DraggableWindow.on_drag(window, SimpleNamespace(x_root=130, y_root=145))
+    assert window.position == (1180, 485)
 
     DraggableWindow.on_release(window, drag_event)
     assert window.dragging is False

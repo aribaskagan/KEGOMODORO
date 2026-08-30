@@ -64,6 +64,8 @@ class DraggableWindow(tk.Toplevel):
 
         self.start_x = 0
         self.start_y = 0
+        self.window_start_x = 0
+        self.window_start_y = 0
         self.dragging = False
 
         for widget in (self, self.image_label, self.timer_label):
@@ -74,13 +76,18 @@ class DraggableWindow(tk.Toplevel):
     def on_press(self, event: tk.Event) -> None:
         self.start_x = event.x_root
         self.start_y = event.y_root
+        self.window_start_x = self.winfo_x()
+        self.window_start_y = self.winfo_y()
         self.dragging = True
-        # Keep receiving pointer events when the cursor leaves this small,
-        # borderless window while it is being moved.
+        # A local grab only receives motion over KEGOMODORO's own windows.
+        # The floating timer must keep following the pointer anywhere on screen.
         try:
-            self.grab_set()
+            self.grab_set_global()
         except tk.TclError:
-            pass
+            try:
+                self.grab_set()
+            except tk.TclError:
+                pass
 
     def on_drag(self, event: tk.Event) -> None:
         if not self.dragging:
@@ -88,11 +95,9 @@ class DraggableWindow(tk.Toplevel):
 
         delta_x = event.x_root - self.start_x
         delta_y = event.y_root - self.start_y
-        new_x = self.winfo_x() + delta_x
-        new_y = self.winfo_y() + delta_y
+        new_x = self.window_start_x + delta_x
+        new_y = self.window_start_y + delta_y
         self.geometry(f"+{new_x}+{new_y}")
-        self.start_x = event.x_root
-        self.start_y = event.y_root
 
     def on_release(self, _event: tk.Event) -> None:
         self.dragging = False
