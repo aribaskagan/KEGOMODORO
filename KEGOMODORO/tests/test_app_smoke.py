@@ -1,6 +1,7 @@
 """Smoke and integration tests for KegomodoroApp GUI."""
 
 import tkinter as tk
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 import pytest
 
@@ -9,6 +10,7 @@ from kegomodoro.audio import SoundService
 from kegomodoro.pixela import PixelaClient
 from kegomodoro.storage import load_configuration, load_time_snapshot
 from kegomodoro.timer import TimerMode, TimerStatus
+from kegomodoro.ui import DraggableWindow
 
 
 @pytest.fixture
@@ -55,6 +57,50 @@ def test_app_init_and_defaults(tk_root, tmp_path):
 
     tk_root.update_idletasks()
     assert opened_files == [note_file]
+
+
+def test_floating_window_drag_keeps_mouse_capture():
+    class FakeWindow:
+        def __init__(self):
+            self.start_x = 0
+            self.start_y = 0
+            self.dragging = False
+            self.position = (1150, 440)
+            self.captured = False
+
+        def grab_set(self):
+            self.captured = True
+
+        def grab_current(self):
+            return self if self.captured else None
+
+        def grab_release(self):
+            self.captured = False
+
+        def winfo_x(self):
+            return self.position[0]
+
+        def winfo_y(self):
+            return self.position[1]
+
+        def geometry(self, value):
+            x, y = value[1:].split("+")
+            self.position = (int(x), int(y))
+
+    window = FakeWindow()
+    press_event = SimpleNamespace(x_root=100, y_root=100)
+    drag_event = SimpleNamespace(x_root=120, y_root=125)
+
+    DraggableWindow.on_press(window, press_event)
+    assert window.dragging is True
+    assert window.grab_current() == window
+
+    DraggableWindow.on_drag(window, drag_event)
+    assert window.position == (1170, 465)
+
+    DraggableWindow.on_release(window, drag_event)
+    assert window.dragging is False
+    assert window.grab_current() is None
 
 
 def test_app_mode_selection_and_timer_flow(tk_root, tmp_path):

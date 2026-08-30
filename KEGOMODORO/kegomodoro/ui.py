@@ -64,19 +64,28 @@ class DraggableWindow(tk.Toplevel):
 
         self.start_x = 0
         self.start_y = 0
+        self.dragging = False
 
-        self.bind("<Button-1>", self.on_press)
-        self.bind("<B1-Motion>", self.on_drag)
-        self.image_label.bind("<Button-1>", self.on_press)
-        self.image_label.bind("<B1-Motion>", self.on_drag)
-        self.timer_label.bind("<Button-1>", self.on_press)
-        self.timer_label.bind("<B1-Motion>", self.on_drag)
+        for widget in (self, self.image_label, self.timer_label):
+            widget.bind("<ButtonPress-1>", self.on_press)
+            widget.bind("<B1-Motion>", self.on_drag)
+            widget.bind("<ButtonRelease-1>", self.on_release)
 
     def on_press(self, event: tk.Event) -> None:
         self.start_x = event.x_root
         self.start_y = event.y_root
+        self.dragging = True
+        # Keep receiving pointer events when the cursor leaves this small,
+        # borderless window while it is being moved.
+        try:
+            self.grab_set()
+        except tk.TclError:
+            pass
 
     def on_drag(self, event: tk.Event) -> None:
+        if not self.dragging:
+            return
+
         delta_x = event.x_root - self.start_x
         delta_y = event.y_root - self.start_y
         new_x = self.winfo_x() + delta_x
@@ -84,6 +93,14 @@ class DraggableWindow(tk.Toplevel):
         self.geometry(f"+{new_x}+{new_y}")
         self.start_x = event.x_root
         self.start_y = event.y_root
+
+    def on_release(self, _event: tk.Event) -> None:
+        self.dragging = False
+        try:
+            if self.grab_current() == self:
+                self.grab_release()
+        except tk.TclError:
+            pass
 
     def update_display(self, text: str, show_hours: bool) -> None:
         if show_hours:
