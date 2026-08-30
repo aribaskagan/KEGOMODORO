@@ -20,7 +20,7 @@ KEGOMODORO features the original classic Tomato UI:
 - **Journal & Note Logging**: Save stopwatch elapsed time and notes directly to a plain-text journal file.
 - **Same-Day Note Merging**: Multiple saves on the same day update the time line and append notes under a single date heading.
 - **Legacy Date Support**: Recognizes and merges historical note date formats (`mm/dd/yyyy`, `mm.dd.yyyy`, `dd/mm/yyyy`, `dd.mm.yyyy`).
-- **Fixed Journal Workflow**: Opens the owner's journal in Notepad at startup and saves Stopwatch notes to the same file without replacing previous notes.
+- **Fixed Journal Workflow**: Saves Stopwatch notes to the owner's journal without replacing previous notes, then opens that journal in Notepad only after Save is pressed.
 - **Optional Pixela Sync**: Synchronize worked hours to your Pixela graph via `.env` credentials with safe bounded retries.
 - **Safe Persistence**: Packaged builds persist user data under `Documents/KEGOMODORO/config/`; source runs use deterministic local storage.
 

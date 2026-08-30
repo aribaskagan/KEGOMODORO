@@ -56,7 +56,7 @@ def test_app_init_and_defaults(tk_root, tmp_path):
     assert load_configuration(config_file, persistent_root=tmp_path).note_path == note_file
 
     tk_root.update_idletasks()
-    assert opened_files == [note_file]
+    assert opened_files == []
 
 
 def test_floating_window_drag_keeps_mouse_capture():
@@ -132,7 +132,6 @@ def test_app_mode_selection_and_timer_flow(tk_root, tmp_path):
         pixela_client=pixela_mock,
         enable_audio=False,
         journal_path=tmp_path / "notes.txt",
-        open_journal_on_startup=False,
     )
 
     # 1. Select Pomodoro
@@ -197,7 +196,6 @@ def test_app_save_in_stopwatch(tk_root, tmp_path):
         open_notepad_func=mock_open_notepad,
         enable_audio=False,
         journal_path=note_file,
-        open_journal_on_startup=False,
     )
 
     app.on_select_stopwatch()
@@ -226,7 +224,6 @@ def test_app_save_outside_stopwatch_shows_error(mock_error, tk_root, tmp_path):
         pref_path=tmp_path / "floating.txt",
         enable_audio=False,
         journal_path=tmp_path / "notes.txt",
-        open_journal_on_startup=False,
     )
 
     app.on_select_pomodoro()

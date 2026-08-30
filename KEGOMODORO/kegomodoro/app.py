@@ -71,7 +71,6 @@ class KegomodoroApp:
         enable_audio: bool = True,
         open_notepad_func: Optional[Callable[[Path], None]] = None,
         journal_path: Optional[Path] = None,
-        open_journal_on_startup: bool = True,
     ):
         # Load environment variables
         load_runtime_env()
@@ -88,7 +87,6 @@ class KegomodoroApp:
             or self.persistent_root / "config" / "floating_window_checker.txt"
         )
         self.journal_path = (journal_path or JOURNAL_PATH).resolve()
-        self.open_journal_on_startup = open_journal_on_startup
 
         # Load persisted data
         self.config: AppConfig = load_configuration(
@@ -125,14 +123,6 @@ class KegomodoroApp:
         self._owns_root = root is None
         self.root = root or tk.Tk()
         self._build_ui()
-        if self.open_journal_on_startup:
-            self.root.after_idle(self._open_journal_on_startup)
-
-    def _open_journal_on_startup(self) -> None:
-        """Open the fixed journal without changing its existing contents."""
-        self.journal_path.parent.mkdir(parents=True, exist_ok=True)
-        self.journal_path.touch(exist_ok=True)
-        self.open_notepad(self.journal_path)
 
     def _build_ui(self) -> None:
         self.root.title("KEGOMODORO")
