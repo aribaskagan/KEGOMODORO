@@ -50,7 +50,7 @@ def test_load_configuration_missing_file(tmp_path):
     assert cfg.work_min == 25
     assert cfg.short_break_min == 5
     assert cfg.long_break_min == 20
-    assert cfg.notepad_mode is False
+    assert cfg.notepad_mode is True
 
 
 def test_load_configuration_valid_5_column(tmp_path):
@@ -91,7 +91,7 @@ def test_load_configuration_malformed_fields_survive(tmp_path):
     assert cfg.work_min == 25
     assert cfg.short_break_min == 5
     assert cfg.long_break_min == 40
-    assert cfg.notepad_mode is False
+    assert cfg.notepad_mode is True
 
 
 def test_save_and_load_configuration_roundtrip(tmp_path):

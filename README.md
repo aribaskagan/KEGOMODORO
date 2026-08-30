@@ -105,13 +105,13 @@ The application automatically creates and maintains `configuration.csv`:
 
 ```csv
 WORK_MIN,SHORT_BREAK_MIN,LONG_BREAK_MIN,NOTEPAD_MODE,NOTE_PATH
-25,5,20,0,notes.txt
+25,5,20,1,notes.txt
 ```
 
 - `WORK_MIN`: Work duration in minutes (default: `25`).
 - `SHORT_BREAK_MIN`: Short break duration in minutes (default: `5`).
 - `LONG_BREAK_MIN`: Long break duration in minutes (default: `20`).
-- `NOTEPAD_MODE`: `1` to bypass the in-app note dialog and open Notepad directly; `0` for the multiline note dialog.
+- `NOTEPAD_MODE`: `1` by default to bypass the in-app note dialog and open Notepad directly; set `0` only if you want the multiline note dialog.
 - `NOTE_PATH`: Maintained for compatibility, but KEGOMODORO uses the fixed owner journal configured in the application.
 
 ## Optional Pixela Sync

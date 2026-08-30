@@ -16,7 +16,7 @@ class AppConfig:
     work_min: int = 25
     short_break_min: int = 5
     long_break_min: int = 20
-    notepad_mode: bool = False
+    notepad_mode: bool = True
     note_path: Path | None = None
 
     def __post_init__(self):
@@ -31,7 +31,11 @@ def parse_bool(value: object, default: bool = False) -> bool:
     if isinstance(value, bool):
         return value
     val_str = str(value).strip().lower()
-    return val_str in ("true", "1", "yes", "correct", "t", "y", "yeah", "yup")
+    if val_str in ("true", "1", "yes", "correct", "t", "y", "yeah", "yup"):
+        return True
+    if val_str in ("false", "0", "no", "f", "n", "nope"):
+        return False
+    return default
 
 
 def resolve_note_path(
@@ -148,7 +152,7 @@ def load_configuration(
                 pass
 
         if "NOTEPAD_MODE" in row_dict:
-            config.notepad_mode = parse_bool(row_dict["NOTEPAD_MODE"], default=False)
+            config.notepad_mode = parse_bool(row_dict["NOTEPAD_MODE"], default=True)
 
         if "NOTE_PATH" in row_dict:
             config.note_path = resolve_note_path(
