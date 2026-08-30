@@ -1,0 +1,23 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    SDL_VIDEODRIVER="dummy" \
+    SDL_AUDIODRIVER="dummy"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-tk \
+    xvfb \
+    libsdl2-2.0-0 \
+    libsdl2-mixer-2.0-0 \
+    libasound2 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+COPY . .
+
+CMD ["sh", "-c", "python -m compileall -q . && python -m ruff check . && python -m pytest -v"]
