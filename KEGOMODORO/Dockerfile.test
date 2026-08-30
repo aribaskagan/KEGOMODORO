@@ -8,6 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-tk \
     xvfb \
+    xauth \
     libsdl2-2.0-0 \
     libsdl2-mixer-2.0-0 \
     libasound2 \
@@ -20,4 +21,4 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python -m compileall -q . && python -m ruff check . && python -m pytest -v"]
+CMD ["sh", "-c", "python -m compileall -q . && python -m ruff check . && xvfb-run -a python -m pytest -v"]

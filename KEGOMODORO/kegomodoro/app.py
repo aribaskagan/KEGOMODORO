@@ -20,6 +20,7 @@ from kegomodoro.storage import (
     load_configuration,
     load_floating_preference,
     load_time_snapshot,
+    save_configuration,
     save_floating_preference,
     save_time_snapshot,
     append_saved_entry,
@@ -45,6 +46,8 @@ from kegomodoro.ui import (
     LargeAskStringDialog,
 )
 
+JOURNAL_PATH = Path(r"C:\Users\ariba\OneDrive\Desktop\KAÆ[Æß#.txt")
+
 
 def default_open_in_notepad(filepath: Path) -> None:
     """Open the note file in Windows Notepad."""
@@ -67,6 +70,8 @@ class KegomodoroApp:
         pixela_client: Optional[PixelaClient] = None,
         enable_audio: bool = True,
         open_notepad_func: Optional[Callable[[Path], None]] = None,
+        journal_path: Optional[Path] = None,
+        open_journal_on_startup: bool = True,
     ):
         # Load environment variables
         load_runtime_env()
@@ -82,10 +87,20 @@ class KegomodoroApp:
             pref_path
             or self.persistent_root / "config" / "floating_window_checker.txt"
         )
+        self.journal_path = (journal_path or JOURNAL_PATH).resolve()
+        self.open_journal_on_startup = open_journal_on_startup
 
         # Load persisted data
         self.config: AppConfig = load_configuration(
             self.config_path, persistent_root=self.persistent_root
+        )
+        # The owner's journal is intentionally fixed. Keep existing notes intact;
+        # this only creates or updates the small configuration file.
+        self.config.note_path = self.journal_path
+        save_configuration(
+            self.config,
+            self.config_path,
+            persistent_root=self.persistent_root,
         )
         self.floating_enabled: bool = load_floating_preference(
             self.pref_path, default=False
@@ -110,6 +125,14 @@ class KegomodoroApp:
         self._owns_root = root is None
         self.root = root or tk.Tk()
         self._build_ui()
+        if self.open_journal_on_startup:
+            self.root.after_idle(self._open_journal_on_startup)
+
+    def _open_journal_on_startup(self) -> None:
+        """Open the fixed journal without changing its existing contents."""
+        self.journal_path.parent.mkdir(parents=True, exist_ok=True)
+        self.journal_path.touch(exist_ok=True)
+        self.open_notepad(self.journal_path)
 
     def _build_ui(self) -> None:
         self.root.title("KEGOMODORO")
