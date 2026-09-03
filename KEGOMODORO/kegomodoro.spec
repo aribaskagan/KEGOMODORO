@@ -1,6 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 from pathlib import Path
+import tkinter
 
 block_cipher = None
 
@@ -8,6 +9,16 @@ datas = [
     ('dependencies/images', 'dependencies/images'),
     ('dependencies/audios', 'dependencies/audios'),
 ]
+
+# Explicitly bundle the complete Tcl/Tk script libraries.  The automatic
+# tkinter hook can omit init.tcl in this Conda environment, which makes a
+# one-file Windows build fail at startup after extraction.
+tcl_library = Path(tkinter.Tcl().eval('info library'))
+tk_library = tcl_library.parent / 'tk8.6'
+datas.extend([
+    (str(tcl_library), '_tcl_data'),
+    (str(tk_library), '_tk_data'),
+])
 
 a = Analysis(
     ['main.py'],
