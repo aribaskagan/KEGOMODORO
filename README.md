@@ -91,13 +91,15 @@ docker run --rm kegomodoro-test
 
 ## Packaged Build
 
-To build the standalone Windows executable:
+To build the stable Windows application folder:
 
 ```bash
 python -m PyInstaller --clean --noconfirm kegomodoro.spec
 ```
 
-The resulting 64-bit Windows binary will be placed at `KEGOMODORO/dist/KEGOMODORO.exe`.
+The resulting 64-bit Windows application will be placed at
+`KEGOMODORO/dist/KEGOMODORO/KEGOMODORO.exe`. Keep the accompanying `_internal`
+folder beside the executable; it contains the Tcl/Tk runtime required by the UI.
 
 ## Configuration (`configuration.csv`)
 
